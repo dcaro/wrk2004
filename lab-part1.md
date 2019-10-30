@@ -22,8 +22,11 @@ Approve the installation with "A", the installation will that couple of minutes.
 - Open PowerShell 6 (be sure to use powershell 6 and not Windows PowerShell)
 - Connect-AzAccount and follow the instructions on the screen.
 - Use the following values to authenticate against Azure:
-    @lab.CloudPortalCredential(User1).Username
-    @lab.CloudPortalCredential(User1).Password
+
+```PowerShell
+    userName = @lab.CloudPortalCredential(User1).Username
+    Password = @lab.CloudPortalCredential(User1).Password
+```
 
 ## Let's create the Web Application
 
@@ -85,9 +88,9 @@ Get the error message itself
 (Resolve-AzError -Last).message
 ```
 
-1. Let's build a script that will do the work but not fail on the error. 
+1. Let's build a script that will do the work but not fail on the error.
 
-Open VSCode and copy the following test in a scaleweb.ps1 file
+Open VSCode and copy the following test in a file name scaleweb.ps1
 
 ```PowerShell
 $webappName="wrk2004-@lab.LabInstance.Id"
@@ -103,3 +106,5 @@ catch {
     $_.Exception.GetType().Name
 }
 ```
+
+Press F5 to run the script in debug mode.
