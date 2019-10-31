@@ -63,9 +63,11 @@ It looks like that `New-AzWebApp` is the cmdlet that we need. Let's open the doc
 get-help New-AzWebApp -online
 ```
 
+Keep the page open.
+
 ### Use the documentation to create the webapp
 
-> **NOTE:** With the page previously open, try to not read below and use the documenation to write the command to create the web app.
+> **NOTE:** With the page from the help documentation still open, try to not read below and use the documenation to write the command to create the web app.
 
 The following command will create the web app in your assigned resource group.
 
@@ -77,67 +79,112 @@ New-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName -Location e
 
 ## Escape Hatches
 
-An escape hatch allows to access capabilities of an Azure resource that is not available in the command line. We will learn here how us escape hatches in the command line of your choice.
+An 'escape hatch' is a workaround that allows to access capabilities of an Azure resource that is not available in the command line. We will learn how to use escape hatches using cmdlets based of the `AzResource` (`New-AzResource` for example).
 
-The web app that we have just created can be disabled but this is not feasible in the portal. You'll learn in the next steps how to do it.
+The web app that you have just created can be disabled but this is not feasible in the portal. In the next steps you will learn how to do it.
 
 ### Disable/Enable the Web App
 
-The following commands will disable the Web App that you have just created.
+The following command will disable the Web App that you have just created.
 
 ```PowerShell
 Set-AzResource -ResourceGroupName $resourceGroupName -ResourceName $webAppName -ResourceType Microsoft.Web/sites -Properties @{enabled = "False"}
 ```
 
-Now let's enable the web app again.
+Browse to the page of the web app to see that is has been disabled.
+
+```PowerShell
+Start-Process ("http://"+(Get-AzWebApp -Name wrk2004-@lab.LabInstance.Id).DefaultHostName )
+```
+
+Now let's enable the web app.
 
 ```PowerShell
 Set-AzResource -ResourceGroupName $resourceGroupName -ResourceName $webAppName -ResourceType Microsoft.Web/sites -Properties @{enabled = "True"}
+```
+
+Refresh the page of the web app and see that it has been enabled again.
+
+```PowerShell
+Start-Process ("http://"+(Get-AzWebApp -Name wrk2004-@lab.LabInstance.Id).DefaultHostName )
 ```
 
 We can use the same mechanism to scale the web application
 
 ### Scale the plan to Q1
 
+In this part of the lab, you will scale the website by changing the SKU of the plan. In Azure this means changing the SKU of the server farm that is used by the web app.
+The following code will try to change the SKU of the plan to "Q1".
+
 ```PowerShell
 Set-AzResource -ResourceGroupName $resourceGroupName -ResourceName $webAppName -ResourceType Microsoft.Web/serverFarms -Sku @{ Name = "Q1"}
 ```
 
-Note that the command fails because the SKU "Q1" is not supported.
-The next section will teach how to perform error handling.
+> NOTE: The command above is expected to fails. You will learn in the next section how to read the error message.
 
 ## Errors handling
 
-1. Use the Resolve-AzError in the command line
+### Understand the errors in the command line
 
-You will see the informations associated to your last command.
+The following command will display the informations associated to the last error.
 
 ```PowerShell
 Resolve-AzError -Last
 ```
 
-Get the error message itself
+You can see all the errors that you had in your session by running the following command.
+
+```PowerShell
+Resolve-AzError
+```
+
+Let's obtain the error message itsefl with the following command.
+
 ```PowerShell
 (Resolve-AzError -Last).message
 ```
 
-1. Let's build a script that will do the work but not fail on the error.
+### Putting it together
 
-Open VSCode and copy the following test in a file name scaleweb.ps1
+In this section you will write a script that will do the work but not fail on the error.
+We will use the `Try`, `Catch` blocks to handle errors in the script.
+
+- Launch VSCode from the taskbar
+- Click **File / New File**
+- Type the following code
 
 ```PowerShell
 $webappName="wrk2004-@lab.LabInstance.Id"
 $resourceGroupName=@lab.CloudResourceGroup(PSRG).Name
+$AppSvcPlanId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName).ServerFarmId
 $ErrorActionPreference = "Stop"
 try {
-    Set-AzResource -ResourceGroupName $resourceGroupName -ResourceName $webAppName -ResourceType Microsoft.Web/serverFarms -Sku @{ Name = "Q1"} -force
+    Set-AzResource -ResourceId $AppSvcPlanID -Sku @{ Name = "Q1"} -force
 }
 catch [Microsoft.Azure.Commands.ResourceManager.Cmdlets.Entities.ErrorResponses.ErrorResponseMessageException] {
-     "An error happened when setting up the webapp`n" + $_.Exception.Message
+     "An error happened when setting up the webapp`nError was `n" + $_.Exception.Message
 }
 catch {
     $_.Exception.GetType().Name
 }
 ```
 
-Press F5 to run the script in debug mode.
+- Click **File / Save**
+- Name the file `scaleWebApp.ps1`
+- Save the file
+- Run the script by pressing `F5`
+
+The result from the script will appear in the terminal window on the bottom of VSCode.
+
+## Summary
+
+Congratulations, you have created your first interactive script to manage Azure resources with Azure PowerShell.
+
+In this lab, you have completed the following tasks:
+
+- Authenticate against Azure
+- Create a web app
+- Use a generic command for operations not supported yet in the tools
+- Make your script resilent to errors
+
+In the next part of the lab we will learn how to automate the script that you have just created.
