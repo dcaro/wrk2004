@@ -54,65 +54,94 @@ New-AzRoleAssignment -ObjectId $functionApp.Identity.PrincipalId -RoleDefinition
 
 ## Create a PowerShell function app that will allow to manage the scale of a website
 
+The function app is really a place where you can create functions that will run code.
+
+- From the Azure portal, click on the function app that you have created earlier wrk2004func-@lab.LabInstance.Id (Note: you may have to refresh your page to see it)
+- Click on the **+** sign next to **Function** on the left blade.
+- Click on **In-portal** then **Continue**
+- Click on **Webhook + API** then **Create**
+
+Replace the code in the `run.ps1` file with the code below.
+
+> **NOTE:** You can try to not look at the code below and do it yourself.
+
+- Replace the code in the `run.ps1` file with the code below.
+
 ```PowerShell
+using namespace System.Net
+
+# Input bindings are passed in via param block.
+param($Request, $TriggerMetadata)
+
+# Write to the Azure Functions log stream.
+Write-Host "PowerShell HTTP trigger function processed a request."
+
+# Interact with query parameters or the body of the request.
 $sku = $request.Query.Sku
+$webAppName = "wrk2004-@lab.LabInstance.Id"
+
+if (-not $sku) {
+    $sku = $Request.Body.Sku
+}
+
 $ErrorActionPreference = "Stop"
+if ($sku) {
+    try {
+        $AppSvcPlanId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName).ServerFarmId
+        Set-AzResource -ResourceId $AppSvcPlanID -Sku @{ Name = "$Sku"} -Force
+        $body = "WebSite $WebAppName status is now running with SKU $sku"
+    }
+    catch [Microsoft.Azure.Commands.ResourceManager.Cmdlets.Entities.ErrorResponses.ErrorResponseMessageException] {
+        $body = "Unsupported SKU"
+    }
 
-try {
-    Set-AzResource -ResourceGroupName @lab.CloudResourceGroup(PSRG).Name -ResourceName wrk2004plan-@lab.LabInstance.Id -ResourceType Microsoft.Web/serverFarms -Sku @{ Name = "$Sku"} -Force
-    $body = "WebSite $name status is now $status"
+    $status = [HttpStatusCode]::OK
 }
-catch [Microsoft.Azure.Commands.ResourceManager.Cmdlets.Entities.ErrorResponses.ErrorResponseMessageException] {
-    $body = "Unsupported SKU"
+else {
+    $status = [HttpStatusCode]::BadRequest
+    $body = "Please pass a name on the query string or in the request body."
 }
 
-$status = [HttpStatusCode]::OK
+# Associate values to output bindings by calling 'Push-OutputBinding'.
+Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+    StatusCode = $status
+    Body = $body
+})
 ```
 
-Click the **Run** button.
-
-
-Change the parameters as follows:
-
-- name= wrk2004-@lab.LabInstance.Id
-- value= P1V2
+- Click on **Test** on the right of the page
+- Change the settings on the page as follows:
+  - HTTP method: GET
+  - Add parameter: sku = P1V2
+- Click **Save and run**
 
 Browse to the web app in the resource group and click "Scale up" in the left blade.
 Under production, the P1V2 princing tier should be selected.
 
 ## Test if the errors handling works
 
-Click **Save** on the top bar.
-Click on **Test** on the right blade.
-
-Under "Query" fill the fields as follows:
-
-- name= wrk2004-@lab.LabInstance.Id
-- value= Q1
-
+Under "Query" change the parameters to sku = Q1
 The Output window will display the following message:
 
 ```
 Unsupported SKU
 ```
 
-## Bonus Lab, enable / disable the website
+## Bonus Lab, add the ability to enable / disable the website
 
-```PowerShell
-$name = $Request.Query.Name
-$enabled = $request.Query.Enabled
-$sku = $request.Query.Sku
-$ErrorActionPreference = "Stop"
+In this unguided exercise, create a new a function that will allow to enable / disable your website.
 
-try {
-    Set-AzResource -ResourceGroupName PSRGlod10427823 -ResourceName $name -ResourceType Microsoft.Web/sites -Properties @{enabled = "$enabled"} -Force
-    Set-AzResource -ResourceGroupName PSRGlod10427823 -ResourceName $name -ResourceType Microsoft.Web/serverFarms -Sku @{ Name = "$Sku"} -Force
-    $body = "WebSite $name status is now $status with a Sku $Sku"
-}
-catch [Microsoft.Azure.Commands.ResourceManager.Cmdlets.Entities.ErrorResponses.ErrorResponseMessageException] {
-    $ErrorMessage =  (Resolve-AzError -Last).Message
-    $body = "The following error occured $ErrorMessage"
-}
+The function should accept the following parameters:
 
-$status = [HttpStatusCode]::OK
-```
+- The name of the web app
+- The end state, "enabled" and "disabled" should be the only authorized values
+
+## Summary
+
+Congratulations, you have created your first Azure function app that automates the management of resources in Azure using Azure PowerShell!
+
+In this lab you have completed the following tasks:
+
+- Create an Azure Function app that runs PowerShell
+- Give permissions Azure Function to modify the web app plan
+- Write PowerShell code with error handling that modifies the service plan
