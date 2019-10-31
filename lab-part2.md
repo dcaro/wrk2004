@@ -1,15 +1,39 @@
 # PART 2 - Automate the process
 
-In this part we will create an Azure Function that can be called to scale out your web application.
-We will run the PowerShell script that we have built previoulsy in an Azure Function.
+In this part you will create an Azure Function that will set the capacity of the web application to the value passed.
 
-## Create an Azure function
+We will use the PowerShell script that we have built in the first part of this lab.
 
-Create a Function Apop in the resource group t@lab.CloudResourceGroup(PSRG).Name using the portal with the following characteristics:
+## Create an Azure Function App
 
-- Name = wrk2004func-@lab.LabInstance.Id
-- Runtime = PowerShell core
-- Plan Type = Premium (Preview)
+We are going to use the Azure Portal to create the Function App
+
+<!-- To be replaced with CLI script or PowerShell with the Function App preview module -->
+
+### Connect to Azure with a browser
+
+- Open a browser and navigate to [https://portal.azure.com](https://portal.azure.com)
+- Login using the credentials that have been provided:
+  - username: @lab.CloudPortalCredential(User1).Username
+  - password: @lab.CloudPortalCredential(User1).Password
+- Under **Navigate** click on **Resource groups**
+- Click on the resource group @lab.CloudResourceGroup(PSRG).Name
+
+### Create an Azure Function App for PowerShell
+
+- From the Azure Portal, click **Add** and type "Function App" in the search box.
+- Click **Create**
+- In the _Basics_ tab enter the following informations:
+  - Name = wrk2004func-@lab.LabInstance.Id
+  - Runtime stack = PowerShell core
+- Click on **Next: Hosting**
+  - Under the Windows Plan name, click **Create new**
+  - Type the following plan nane wrk2004plan-@lab.LabInstance.Id
+  - Change the plan type for **Premium (Preview)**
+- Click on **Review + create**
+- Click on **Create**
+
+Wait until the deployment has completed before proceeding to the next step. It will take couple of minutes to complete.
 
 ## Assign permissions to the function app
 
@@ -19,10 +43,11 @@ From your PowerShell command, run the following commands:
 ```PowerShell
 $webAppName = "wrk2004-@lab.LabInstance.Id"
 $functionAppName = "wrk2004func-@lab.LabInstance.Id"
+$resourceGroupName=@lab.CloudResourceGroup(PSRG).Name
 #Get AppPlan for webApp
-$AppSvcPlanId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resGroup).ServerFarmId
+$AppSvcPlanId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName).ServerFarmId
 #Enable MSI and get MSI Id of the function
-$functionApp=Set-AzWebApp -AssignIdentity $true -Name $functionAppName -ResourceGroupName $resGroup
+$functionApp=Set-AzWebApp -AssignIdentity $true -Name $functionAppName -ResourceGroupName $resourceGroupName
 # Assign the LOD owner role for the function App to the app service plan
 New-AzRoleAssignment -ObjectId $functionApp.Identity.PrincipalId -RoleDefinitionName "LOD Owner" -Scope $AppSvcPlanId
 ```
@@ -30,12 +55,11 @@ New-AzRoleAssignment -ObjectId $functionApp.Identity.PrincipalId -RoleDefinition
 ## Create a PowerShell function app that will allow to manage the scale of a website
 
 ```PowerShell
-$name = $Request.Query.Name
 $sku = $request.Query.Sku
 $ErrorActionPreference = "Stop"
 
 try {
-    Set-AzResource -ResourceGroupName PSRGlod10427823 -ResourceName $name -ResourceType Microsoft.Web/serverFarms -Sku @{ Name = "$Sku"} -Force
+    Set-AzResource -ResourceGroupName @lab.CloudResourceGroup(PSRG).Name -ResourceName wrk2004plan-@lab.LabInstance.Id -ResourceType Microsoft.Web/serverFarms -Sku @{ Name = "$Sku"} -Force
     $body = "WebSite $name status is now $status"
 }
 catch [Microsoft.Azure.Commands.ResourceManager.Cmdlets.Entities.ErrorResponses.ErrorResponseMessageException] {
