@@ -12,3 +12,8 @@ You will learn the following:
 - Implement workarounds when a resources is not yet available.
 - Handle errors from the cloud platform.
 - Implement automation.
+
+This lab is composed of 2 parts:
+
+- Part 1: Create a Web App with PowerShell [lab-part1.md](lab-part1.md)
+- Part 2: Automate using Azure Function [lab-part2.md](lab-part2.md)
