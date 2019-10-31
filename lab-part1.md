@@ -1,64 +1,97 @@
 # PART1 - Create your script to deploy a web application
 
-## Your environment
+At the end of this part you will have a script that will create an deploy a web application in the resource group that you have been provided.
 
-You have been provided credentials for your subscription
-Connect to your subscription:
+## Configure your environment
 
-## Create your first script
+Under the "Resources" tab you can find the credentials giving you access to a resource group in Azure.
 
-In this exercise you will create a Azure PowerShell script that will deploy a simple Web Application.
+### Install the Azure module for PowerShell
 
-1. Install the latest module for Azure PowerShell 
+- Launch `PowerShell 6`
+
+    Click on the start menu and type `PowerShell 6`
+
+- From the PowerShell prompt type the followin command.
+
+    ```PowerShell
+    Install-Module -Name Az -Force
+    ```
+
+The installation will that couple of minutes to complete.
+
+> **TIP**: With PowerShell you can use `<TAB>` to auto-complete your command or the parameters.
+
+### Connect to your Azure environment
+
+From the PowerShell prompt, type the following command and follow the instructions.
 
 ```PowerShell
-Install-Module -Name Az
+Connect-AzAccount
 ```
 
-Approve the installation with "A", the installation will that couple of minutes.
+Open the browser of your choice and go to [http://aka.ms/devicelogin](http://aka.ms/devicelogin)
 
-1. Connect to your azure environment
+Use following values to authenticate against Azure:
 
-- Open PowerShell 6 (be sure to use powershell 6 and not Windows PowerShell)
-- Connect-AzAccount and follow the instructions on the screen.
-- Use the following values to authenticate against Azure:
-
-```PowerShell
     userName = @lab.CloudPortalCredential(User1).Username
     Password = @lab.CloudPortalCredential(User1).Password
+
+Go back to the **PowerShell** window. Shortly you should see the account information displayed
+
+### Discover the cmdlet to use to create a Web App
+
+To find which command is needed to create a web app, we will use the `Get-Help` command that is native to PowerShell.
+
+```PowerShell
+# Find the command to use to create a webapp
+Get-help webpp
 ```
 
-## Let's create the Web Application
+You will be displayed all the cmdlets that contains `webapp`, about 51 commands. Let's filter only thoses that start with "New.
+In PowerShell "New" is used to create new resources, "Set" is used to modify an existin resource. More informations about this at the following location: [Approved verbs for PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands?view=powershell-6)
 
-1. Discover the cmdlet to use to create a Web App.
+```PowerShell
+# Refine the command
+get-help webapp | where { $_.Name -like "New*"}
+```
 
-    ```PowerShell
-    # Find the command to use to create a webapp
-    Get-help webpp
+It looks like that `New-AzWebApp` is the cmdlet that we need. Let's open the documentation associated.
 
-    # Refine the command
-    get-help webapp | where { $_.Name -like "New-*"}
+```PowerShell
+# Open the web page with the latest documentation
+get-help New-AzWebApp -online
+```
 
-    # Go Online to get the latest
-    get-help New-AzWebApp -online
-    ```
+### Use the documentation to create the webapp
 
-1. Create the webapp
+> **NOTE:** With the page previously open, try to not read below and use the documenation to write the command to create the web app.
 
-    ```PowerShell
-    $webappName="wrk2004-@lab.LabInstance.Id"
-    $resourceGroupName=@lab.CloudResourceGroup(PSRG).Name
-    New-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName -Location eastus
-    ```
+The following command will create the web app in your assigned resource group.
+
+```PowerShell
+$webappName="wrk2004-@lab.LabInstance.Id"
+$resourceGroupName=@lab.CloudResourceGroup(PSRG).Name
+New-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName -Location eastus
+```
 
 ## Escape Hatches
 
-We can disable the web app but this capability is not exposed in the portal. We'll have to use a more elaborated solution consisting in using escape hatches.
+An escape hatch allows to access capabilities of an Azure resource that is not available in the command line. We will learn here how us escape hatches in the command line of your choice.
+
+The web app that we have just created can be disabled but this is not feasible in the portal. You'll learn in the next steps how to do it.
 
 ### Disable/Enable the Web App
 
+The following commands will disable the Web App that you have just created.
+
 ```PowerShell
 Set-AzResource -ResourceGroupName $resourceGroupName -ResourceName $webAppName -ResourceType Microsoft.Web/sites -Properties @{enabled = "False"}
+```
+
+Now let's enable the web app again.
+
+```PowerShell
 Set-AzResource -ResourceGroupName $resourceGroupName -ResourceName $webAppName -ResourceType Microsoft.Web/sites -Properties @{enabled = "True"}
 ```
 
