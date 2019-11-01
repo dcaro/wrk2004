@@ -4,38 +4,57 @@ In this part you will create an Azure Function that will set the capacity of the
 
 We will use the PowerShell script that we have built in the first part of this lab.
 
+## Escape Hatch 
+Login to Azure CLI per instructions in Lab 1.
+
+In the first part, you saw how to use Azure PowerShell escape hatch to enable/disable a webapp.
+
+In this part, you will now use the escape hatch to create a preview Premium App Service Plan that is not yet supported in Azure CLI. This is needed to run an Azure Function with the PowerShell runtime.
+
+### Create a preview Premium App Service Plan
+From the command prompt run the following Azure CLI command using the `az resource create` escape hatch to specify the preview Premium plan.
+
+```Shell
+az resource create 
+-g @lab.CloudResourceGroup(PSRG).Name  
+-n wrk2004plan-@lab.LabInstance.Id 
+-p '{
+  "kind": "app",
+  "location": "East US",
+  "properties": {},
+  "sku": {
+      "name": "P1",
+      "tier": "Premium",
+      "size": "P1",
+      "family": "P",
+      "capacity": 1
+  }
+}'
+--resource-type Microsoft.Web/serverfarms 
+--is-full-object  -l eastus
+```
+
+## Create an Azure Storage Account
+Create an Azure Storage Account to use as the function store.
+
+Run this command in the cmd window.
+```Shell
+az storage account create -n wrk2004store-@lab.LabInstance.Id -g @lab.CloudResourceGroup(PSRG).Name -l eastus --sku Standard_LRS
+```
+
 ## Create an Azure Function App
+We can now use the plan above to create an Azure Function App using the Azure CLI.
 
-We are going to use the Azure Portal to create the Function App
+Run this command in the cmd window.
 
-<!-- To be replaced with CLI script or PowerShell with the Function App preview module -->
-
-### Connect to Azure with a browser
-
-- Open a browser and navigate to [https://portal.azure.com](https://portal.azure.com)
-- Login using the credentials that have been provided:
-  - username: @lab.CloudPortalCredential(User1).Username
-  - password: @lab.CloudPortalCredential(User1).Password
-- Under **Navigate** click on **Resource groups**
-- Click on the resource group @lab.CloudResourceGroup(PSRG).Name
-
-### Create an Azure Function App for PowerShell
-
-- From the Azure Portal, click **Add** and type "Function App" in the search box.
-- Click **Create**
-- In the _Basics_ tab enter the following informations:
-  - Name = wrk2004func-@lab.LabInstance.Id
-  - Runtime stack = PowerShell core
-- Click on **Next: Hosting**
-  - Under the Windows Plan name, click **Create new**
-  - Type the following plan nane wrk2004plan-@lab.LabInstance.Id
-  - Change the plan type for **Premium (Preview)**
-- Click on **Review + create**
-- Click on **Create**
+```Shell
+az functionapp create -g @lab.CloudResourceGroup(PSRG).Name  -p wrk2004plan-@lab.LabInstance.Id -n wrk2004func-@lab.LabInstance.Id -s wrk2004store-@lab.LabInstance.Id --runtime 'powershell'
+```
 
 Wait until the deployment has completed before proceeding to the next step. It will take couple of minutes to complete.
 
 ## Assign permissions to the function app
+Login to PowerShell per instructions in Lab 1. 
 
 The following steps will give the Function App permissions to modify the Web App that we have create previously.
 From your PowerShell command, run the following commands:
@@ -138,10 +157,10 @@ The function should accept the following parameters:
 
 ## Summary
 
-Congratulations, you have created your first Azure function app that automates the management of resources in Azure using Azure PowerShell!
+Congratulations, you have created an  Azure function app using Azure CLI. This automates the management of resources in Azure using Azure PowerShell!
 
 In this lab you have completed the following tasks:
 
-- Create an Azure Function app that runs PowerShell
-- Give permissions Azure Function to modify the web app plan
+- Create an Azure Function app that runs PowerShell using the Azure CLI with related Storage account and App service plan.
+- Give permissions to the Azure Function to modify the web app plan
 - Write PowerShell code with error handling that modifies the service plan
