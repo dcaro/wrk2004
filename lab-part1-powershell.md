@@ -8,7 +8,7 @@ Under the "Resources" tab you can find the credentials giving you access to a re
 
 ### Install the Azure module for PowerShell
 
-- Launch `PowerShell 6`
+- Launch **PowerShell 6**
 
     Click on the start menu and type `PowerShell 6`
 
@@ -20,7 +20,7 @@ Under the "Resources" tab you can find the credentials giving you access to a re
 
 The installation will that couple of minutes to complete.
 
-> **TIP**: With PowerShell you can use `<TAB>` to auto-complete your command or the parameters.
+> **TIP**: With PowerShell you can use **TAB** to auto-complete your command or the parameters.
 
 ### Connect to your Azure environment
 
@@ -30,36 +30,35 @@ From the PowerShell prompt, type the following command and follow the instructio
 Connect-AzAccount
 ```
 
-Open the browser of your choice and go to [http://aka.ms/devicelogin](http://aka.ms/devicelogin)
+Open the browser of your choice and go to +++http://aka.ms/devicelogin+++
 
 Use following values to authenticate against Azure:
 
-    userName = @lab.CloudPortalCredential(User1).Username
-    Password = @lab.CloudPortalCredential(User1).Password
+userName
+    ```@lab.CloudPortalCredential(User1).Username```
+Password
+    ```@lab.CloudPortalCredential(User1).Password```
 
 Go back to the **PowerShell** window. Shortly you should see the account information displayed
 
 ### Discover the cmdlet to use to create a Web App
 
-To find which command is needed to create a web app, we will use the `Get-Help` command that is native to PowerShell.
+To find which command is needed to create a web app, we will use the **Get-Help** command that is native to PowerShell.
 
 ```PowerShell
-# Find the command to use to create a webapp
 Get-help webpp
 ```
 
-You will be displayed all the cmdlets that contains `webapp`, about 51 commands. Let's filter only thoses that start with "New.
+You will be displayed all the cmdlets that contains **webapp**, about 51 commands. Let's filter only thoses that start with **New**.
 In PowerShell "New" is used to create new resources, "Set" is used to modify an existin resource. More informations about this at the following location: [Approved verbs for PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands?view=powershell-6)
 
 ```PowerShell
-# Refine the command
 get-help webapp | where { $_.Name -like "New*"}
 ```
 
-It looks like that `New-AzWebApp` is the cmdlet that we need. Let's open the documentation associated.
+It looks like that **New-AzWebApp** is the cmdlet that we need. The following command will open the latest documentation associated with the command.
 
 ```PowerShell
-# Open the web page with the latest documentation
 get-help New-AzWebApp -online
 ```
 
@@ -73,9 +72,11 @@ The following command will create the web app in your assigned resource group.
 
 ```PowerShell
 $webappName="wrk2004-@lab.LabInstance.Id"
-$resourceGroupName=@lab.CloudResourceGroup(PSRG).Name
+$resourceGroupName="@lab.CloudResourceGroup(PSRG).Name"
 New-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName -Location eastus
 ```
+
+This will take a minute to complete.
 
 ## Escape Hatches
 
@@ -155,7 +156,7 @@ We will use the `Try`, `Catch` blocks to handle errors in the script.
 
 ```PowerShell
 $webappName="wrk2004-@lab.LabInstance.Id"
-$resourceGroupName=@lab.CloudResourceGroup(PSRG).Name
+$resourceGroupName="@lab.CloudResourceGroup(PSRG).Name"
 $AppSvcPlanId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName).ServerFarmId
 $ErrorActionPreference = "Stop"
 try {
@@ -170,9 +171,9 @@ catch {
 ```
 
 - Click **File / Save**
-- Name the file `scaleWebApp.ps1`
+- Use the name `scaleWebApp.ps1`
 - Save the file
-- Run the script by pressing `F5`
+- Run the script by pressing **F5**
 
 The result from the script will appear in the terminal window on the bottom of VSCode.
 
