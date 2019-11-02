@@ -284,7 +284,10 @@ Invoke-WebRequest "https://raw.githubusercontent.com/dcaro/wrk2004/master/run.ps
 - Click on **Test** on the right of the page
 - Change the settings on the page as follows:
   - HTTP method: GET
-  - Add parameter: sku = P1V2
+  - Add parameter: sku = S2
+  - Add parameter: WebAppName = wrk2004-@lab.LabInstance.Id
+  - Add parameter: ResourceGRoup = @lab.CloudResourceGroup(PSRG).Name
+  
 - Click **Save and run**
 
 Browse to the web app in the resource group and click "Scale up" in the left blade.
