@@ -275,11 +275,21 @@ The function app is really a place where you can create functions that will run 
 > - You can try to not look at the solution below and write the code yourself
 > - For practicality, use this command to get the code of the function on locally
 
+Go to you PowerShell session and type the following
+
 ```PowerShell
 Invoke-WebRequest "https://raw.githubusercontent.com/dcaro/wrk2004/master/run.ps1" -OutFile ./run.ps1
 ```
 
-- Replace the content of the **run.ps1** in your browser with the content of the file that you have just downloaded.
+Open the file with notepad
+
+```PowerShell
+notepad ./run.ps1
+```
+
+Select all the content and copy it with "Ctrl + C"
+
+- Go to your browser and replace the content of the **run.ps1** in your browser with the content of the file that you have just copied.
 
 - Click on **Test** on the right of the page
 - Change the settings on the page as follows:
