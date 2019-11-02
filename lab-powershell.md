@@ -259,7 +259,7 @@ $WebAppId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName)
 $functionApp=Set-AzWebApp -AssignIdentity $true -Name $functionAppName -ResourceGroupName $resourceGroupName
 # Assign the LOD owner role for the function App to the app service plan
 New-AzRoleAssignment -ObjectId $functionApp.Identity.PrincipalId -RoleDefinitionName "LOD Owner" -Scope $AppSvcPlanId
-New-AzRoleAssignment -ObjectId $functionApp.Identity.PrincipalId -RoleDefinitionName "LOD Owner" -Scope $AppSvcPlanId
+New-AzRoleAssignment -ObjectId $functionApp.Identity.PrincipalId -RoleDefinitionName "LOD Owner" -Scope $WebAppId
 ```
 
 ## Create a PowerShell function app that will allow to manage the scale of a website
