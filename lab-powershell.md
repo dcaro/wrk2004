@@ -7,6 +7,7 @@ At the end of this part you will have a script that will create and deploy a web
 To connect to the Virtual Machine, use the following credentials:
 
 UserName: `@lab.VirtualMachine(WRK2004).Username`
+
 Password: `@lab.VirtualMachine(WRK2004).Password`
 
 > **NOTE**: In the "Resources" tab you have the user names and passwords that you will needt to complete this lab.
@@ -207,43 +208,37 @@ We will use the PowerShell script that we have built in the first part of this l
 
 ## Create the Azure Function
 
-Login to Azure CLI using the following code and follow the instructions on screen.
+### Connect to Azure with a browser
 
-```shell
-az login
-```
+- Open a browser and navigate to +++https://portal.azure.com+++
 
-In the first part, you saw how to use Azure PowerShell escape hatch to enable/disable a webapp.
+- Login using the credentials that have been provided:
 
-In this part, you will now use the escape hatch to create a preview Premium App Service Plan that is not yet supported in Azure CLI or PowerShell. This is needed to run an Azure Function with the PowerShell runtime.
+  - username: `@lab.CloudPortalCredential(User1).Username`
+  - password: `@lab.CloudPortalCredential(User1).Password`
 
-### Create a preview Premium App Service Plan
+- Under **Navigate** click on **Resource groups**
 
-From the command prompt run the following Azure CLI command using the **az resource create** escape hatch to specify the preview Premium plan.
+- Click on the resource group **@lab.CloudResourceGroup(PSRG).Name**
 
-```Shell
-az resource create -g @lab.CloudResourceGroup(PSRG).Name -n wrk2004plan-@lab.LabInstance.Id -p @.\Documents\ep1.json --resource-type Microsoft.Web/serverfarms --is-full-object -l eastus
-```
+### Create an Azure Function App for PowerShell
 
-## Create an Azure Storage Account
+- From the Azure Portal, click **Add** and type "Function App" in the search box.
 
-Create an Azure Storage Account to use as the function store.
+- Click **Create**
 
-Run this command in the PowerShell window.
+- In the _Basics_ tab enter the following informations:
+  - Name = `wrk2004func-@lab.LabInstance.Id`
+  - Runtime stack = PowerShell core
 
-```shell
-az storage account create -n wrk2004store-@lab.LabInstance.Id -g @lab.CloudResourceGroup(PSRG).Name -l eastus --sku Standard_LRS
-```
+- Click on **Next: Hosting**
+  - Under the Windows Plan name, click **Create new**
+  - Type the following plan nane `wrk2004plan-@lab.LabInstance.Id`
+  - Change the plan type for **Premium (Preview)**
 
-## Create an Azure Function App
+- Click on **Review + create**
 
-We can now use the plan above to create an Azure Function App using the Azure CLI.
-
-Run this command in the cmd window.
-
-```shell
-az functionapp create -g @lab.CloudResourceGroup(PSRG).Name  -p wrk2004plan-@lab.LabInstance.Id -n wrk2004func-@lab.LabInstance.Id -s wrk2004store-@lab.LabInstance.Id --runtime 'powershell'
-```
+- Click on **Create**
 
 Wait until the deployment has completed before proceeding to the next step. It will take couple of minutes to complete.
 
