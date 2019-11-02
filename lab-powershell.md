@@ -20,9 +20,9 @@ Launch **PowerShell 6**
 
 From the PowerShell prompt type the following command then press "Enter".
 
-    ```PowerShell
-    Install-Module -Name Az -Force
-    ```
+```PowerShell
+Install-Module -Name Az -Force
+```
 
 The installation will take couple of minutes to complete.
 
@@ -218,23 +218,7 @@ In this part, you will now use the escape hatch to create a preview Premium App 
 From the command prompt run the following Azure CLI command using the `az resource create` escape hatch to specify the preview Premium plan.
 
 ```Shell
-az resource create 
--g @lab.CloudResourceGroup(PSRG).Name  
--n wrk2004plan-@lab.LabInstance.Id 
--p '{
-  "kind": "app",
-  "location": "East US",
-  "properties": {},
-  "sku": {
-      "name": "P1",
-      "tier": "Premium",
-      "size": "P1",
-      "family": "P",
-      "capacity": 1
-  }
-}'
---resource-type Microsoft.Web/serverfarms 
---is-full-object  -l eastus
+az resource create -g @lab.CloudResourceGroup(PSRG).Name -n wrk2004plan-@lab.LabInstance.Id -p @.\Documents\ep1.json --resource-type Microsoft.Web/serverfarms --is-full-object -l eastus
 ```
 
 ## Create an Azure Storage Account
