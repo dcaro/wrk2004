@@ -6,9 +6,9 @@ At the end of this part you will have a script that will create and deploy a web
 
 To connect to the Virtual Machine, use the following credentials:
 
-UserName: `@lab.VirtualMachine(WRK2004).Username`
+- UserName: `@lab.VirtualMachine(WRK2004).Username`
 
-Password: `@lab.VirtualMachine(WRK2004).Password`
+- Password: `@lab.VirtualMachine(WRK2004).Password`
 
 > **NOTE**: In the "Resources" tab you have the user names and passwords that you will needt to complete this lab.
 
