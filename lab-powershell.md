@@ -215,7 +215,7 @@ In this part, you will now use the escape hatch to create a preview Premium App 
 
 ### Create a preview Premium App Service Plan
 
-From the command prompt run the following Azure CLI command using the `az resource create` escape hatch to specify the preview Premium plan.
+From the command prompt run the following Azure CLI command using the **az resource create** escape hatch to specify the preview Premium plan.
 
 ```Shell
 az resource create -g @lab.CloudResourceGroup(PSRG).Name -n wrk2004plan-@lab.LabInstance.Id -p @.\Documents\ep1.json --resource-type Microsoft.Web/serverfarms --is-full-object -l eastus
@@ -225,8 +225,9 @@ az resource create -g @lab.CloudResourceGroup(PSRG).Name -n wrk2004plan-@lab.Lab
 
 Create an Azure Storage Account to use as the function store.
 
-Run this command in the cmd window.
-```Shell
+Run this command in the PowerShell window.
+
+```shell
 az storage account create -n wrk2004store-@lab.LabInstance.Id -g @lab.CloudResourceGroup(PSRG).Name -l eastus --sku Standard_LRS
 ```
 
@@ -236,7 +237,7 @@ We can now use the plan above to create an Azure Function App using the Azure CL
 
 Run this command in the cmd window.
 
-```Shell
+```shell
 az functionapp create -g @lab.CloudResourceGroup(PSRG).Name  -p wrk2004plan-@lab.LabInstance.Id -n wrk2004func-@lab.LabInstance.Id -s wrk2004store-@lab.LabInstance.Id --runtime 'powershell'
 ```
 
@@ -250,9 +251,10 @@ From your PowerShell command, run the following commands:
 ```PowerShell
 $webAppName = "wrk2004-@lab.LabInstance.Id"
 $functionAppName = "wrk2004func-@lab.LabInstance.Id"
-$resourceGroupName="@lab.CloudResourceGroup(PSRG).Name"
+$resourceGroupName = "@lab.CloudResourceGroup(PSRG).Name"
 #Get AppPlan for webApp
 $AppSvcPlanId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName).ServerFarmId
+$WebAppId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName).Id
 #Enable MSI and get MSI Id of the function
 $functionApp=Set-AzWebApp -AssignIdentity $true -Name $functionAppName -ResourceGroupName $resourceGroupName
 # Assign the LOD owner role for the function App to the app service plan
@@ -269,55 +271,16 @@ The function app is really a place where you can create functions that will run 
 - Click on **In-portal** then **Continue**
 - Click on **Webhook + API** then **Create**
 
-Replace the code in the `run.ps1` file with the code below.
-
-> **NOTE:** You can try to not look at the code below and do it yourself.
-
-- Replace the code in the `run.ps1` file with the code below.
-
-> **NOTE:** For simplicity of use, the code below is in the **run.ps1** file in the **Documents** folder. 
+> **NOTES:**
+>
+> - You can try to not look at the solution below and write the code yourself
+> - For practicality, use this command to get the code of the function on locally
 
 ```PowerShell
-using namespace System.Net
-
-# Input bindings are passed in via param block.
-param($Request, $TriggerMetadata)
-
-# Write to the Azure Functions log stream.
-Write-Host "PowerShell HTTP trigger function processed a request."
-
-# Interact with query parameters or the body of the request.
-$sku = $request.Query.Sku
-$webAppName = $request.Query.WebAppName
-
-if (-not $sku) {
-    $sku = $Request.Body.Sku
-}
-
-$ErrorActionPreference = "Stop"
-if ($sku) {
-    try {
-        $AppSvcPlanId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName).ServerFarmId
-        Set-AzResource -ResourceId $AppSvcPlanID -Sku @{ Name = "$Sku"} -Force
-        $body = "WebSite $WebAppName status is now running with SKU $sku"
-    }
-    catch [Microsoft.Azure.Commands.ResourceManager.Cmdlets.Entities.ErrorResponses.ErrorResponseMessageException] {
-        $body = "Unsupported SKU"
-    }
-
-    $status = [HttpStatusCode]::OK
-}
-else {
-    $status = [HttpStatusCode]::BadRequest
-    $body = "Please pass a name on the query string or in the request body."
-}
-
-# Associate values to output bindings by calling 'Push-OutputBinding'.
-Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
-    StatusCode = $status
-    Body = $body
-})
+Invoke-WebRequest "https://raw.githubusercontent.com/dcaro/wrk2004/master/run.ps1" -OutFile ./run.ps1
 ```
+
+- Replace the content of the **run.ps1** in your browser with the content of the file that you have just downloaded.
 
 - Click on **Test** on the right of the page
 - Change the settings on the page as follows:
@@ -326,7 +289,8 @@ Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
 - Click **Save and run**
 
 Browse to the web app in the resource group and click "Scale up" in the left blade.
-Under production, the P1V2 princing tier should be selected.
+
+Go to the production tab, the P1V2 princing tier should be selected.
 
 ## Test if the errors handling works
 
