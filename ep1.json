@@ -1,0 +1,12 @@
+{
+    "kind": "app",
+    "location": "East US",
+    "properties": {},
+    "sku": {
+      "name": "EP1",
+      "tier": "ElasticPremium",
+      "size": "EP1",
+      "family": "EP",
+      "capacity": 1
+    }
+  }
