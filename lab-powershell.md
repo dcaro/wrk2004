@@ -207,11 +207,15 @@ We will use the PowerShell script that we have built in the first part of this l
 
 ## Create the Azure Function
 
-Login to Azure CLI per instructions in Lab 1.
+Login to Azure CLI using the following code and follow the instructions on screen.
+
+```shell
+az login
+```
 
 In the first part, you saw how to use Azure PowerShell escape hatch to enable/disable a webapp.
 
-In this part, you will now use the escape hatch to create a preview Premium App Service Plan that is not yet supported in Azure CLI. This is needed to run an Azure Function with the PowerShell runtime.
+In this part, you will now use the escape hatch to create a preview Premium App Service Plan that is not yet supported in Azure CLI or PowerShell. This is needed to run an Azure Function with the PowerShell runtime.
 
 ### Create a preview Premium App Service Plan
 
