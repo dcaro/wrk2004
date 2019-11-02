@@ -23,6 +23,7 @@ if ($sku) {
         $body = "WebSite $WebAppName status is now running with SKU $sku"
     }
     catch {
+        Resolve-AzError
         $body = "Unsupported SKU"
     }
 
