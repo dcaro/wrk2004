@@ -4,6 +4,17 @@ In this part you will create an Azure Function that will set the capacity of the
 
 We will use the PowerShell script that we have built in the first part of this lab.
 
+## Install Azure PowerShell (only for those who used Azure CLI in part 1)
+Launch **PowerShell 6**
+- Click on the start menu and type `PowerShell 6`
+- Click on "PowerShell 6 (x64)"
+From the PowerShell prompt type the following command then press "Enter".
+
+```PowerShell
+Install-Module -Name Az -Force
+```
+The installation will take couple of minutes to complete.
+
 ## Connect to Azure with Azure CLI (for those who used Azure PowerShell in part 1)
 Search (click the magnifying glass in the start bar) for **cmd** and open the  Windows Command Prompt. Type the following command. 
 ```CLI
@@ -40,16 +51,6 @@ az functionapp create -g @lab.CloudResourceGroup(PSRG).Name  -p wrk2004plan-@lab
 Wait until the deployment has completed before proceeding to the next step. It will take couple of minutes to complete.
 
 ## Connect to Azure with Azure PowerShell (only for those who used Azure CLI in part 1)
-Launch **PowerShell 6**
-- Click on the start menu and type `PowerShell 6`
-- Click on "PowerShell 6 (x64)"
-From the PowerShell prompt type the following command then press "Enter".
-
-```PowerShell
-Install-Module -Name Az -Force
-```
-The installation will take couple of minutes to complete.
-
 From the PowerShell prompt, type the following command and follow the instructions.
 
 ```PowerShell
@@ -94,18 +95,13 @@ Save the file. From the PowerShell prompt, execute the above script by running i
 ## Create a PowerShell function app that will allow to manage the scale of a website
 
 The function app is really a place where you can create functions that will run code.
-
-- From the Azure portal, click on the function app that you have created earlier wrk2004func-@lab.LabInstance.Id (Note: you may have to refresh your page to see it)
+- In the browser where you logged into the tools, goto - `http://portal.azure.com` and sign in
+- From the Azure portal, click on the function app that you created earlier by searching for `wrk2004func-@lab.LabInstance.Id` (Note: you may have to refresh your page to see it)
 - Click on the **+** sign next to **Function** on the left blade.
-- Click on **In-portal** then **Continue**
-- Click on **Webhook + API** then **Create**
+- Scroll down and click on **In-portal** then **Continue**
+- Scroll up and Click on **Webhook + API** then **Create**
 
-> **NOTES:**
->
-> - You can try to not look at the solution below and write the code yourself
-> - For practicality, use this command to get the code of the function on locally
-
-Go to you PowerShell session and type the following
+Go to your PowerShell prompt and type the following
 
 ```PowerShell
 Invoke-WebRequest "https://raw.githubusercontent.com/dcaro/wrk2004/master/run.ps1" -OutFile ./run.ps1
@@ -120,25 +116,22 @@ notepad ./run.ps1
 Select all the content and copy it with "Ctrl + C"
 
 - Go to your browser and replace the content of the **run.ps1** in your browser with the content of the file that you have just copied.
-
 - Click on **Test** on the right of the page
 - Change the settings on the page as follows:
   - HTTP method: GET
   - Add parameter: sku = S2
   - Add parameter: WebAppName = wrk2004-@lab.LabInstance.Id
-  - Add parameter: ResourceGRoup = @lab.CloudResourceGroup(PSRG).Name
-  
+  - Add parameter: ResourceGRoup = @lab.CloudResourceGroup(PSRG).Name 
 - Click **Save and run**
 
 Browse to the web app in the resource group and click "Scale up" in the left blade.
 
-Go to the production tab, the P1V2 pricing tier should be selected. As we created one with the free tier, this worked!
+Go to the production tab, the **P1V2** pricing tier should be selected. As we created one with the free tier **F1**, this worked!
 
 ## Summary
-
 Congratulations, you have created an  Azure function app using Azure CLI. This automates the management of resources in Azure using Azure PowerShell!
 
 In this lab you have completed the following tasks:
 - Create an Azure Function app that runs PowerShell using the Azure CLI with related Storage account and App service plan.
-- Give permissions to the Azure Function to modify the web app plan
+- Give permissions to the Azure Function to modify the web app plan using Azure PowerShell
 - Write PowerShell code with error handling that modifies the service plan
