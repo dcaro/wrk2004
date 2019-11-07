@@ -72,6 +72,7 @@ From your PowerShell prompt, run the following to open Visual Studio Code :
 ```PowerShell
 notepad perm.ps1
 ```
+**NOTE: PowerShell part 1 users, please change the web rg name to PSRG from CLIRG** 
 Accept prompt to create the new file. Paste the following into notepad.<ensure you don't move the mouse or click elsewhere after clicking the T as this will take a while>. Ensure the contents have been copied accurately. 
 ```PowerShell
 $webAppName = "wrk2004-@lab.LabInstance.Id"
@@ -121,12 +122,16 @@ Select all the content and copy it with "Ctrl + C"
   - HTTP method: GET
   - Add parameter: sku = S2
   - Add parameter: WebAppName = `wrk2004-@lab.LabInstance.Id`
-  - Add parameter: ResourceGRoup = `@lab.CloudResourceGroup(PSRG).Name` 
+  
+  - Add parameter: ResourceGRoup = `@lab.CloudResourceGroup(CLIRG).Name`
+  OR
+  - **PowerShell part 1 users only** Add parameter: ResourceGRoup = `@lab.CloudResourceGroup(PSRG).Name`
+
 - Click **Save and run**
 
 Browse to the web app in the resource group and click "Scale up" in the left blade.
 
-Go to the production tab, the **P1V2** pricing tier should be selected. As we created one with the free tier **F1**, this worked!
+Go to the production tab, the **P1V2** pricing tier should be selected. As we created one with a different tier (**F1** for CLI) in part 1, this worked!
 
 ## Summary
 Congratulations, you have created an  Azure function app using Azure CLI. This automates the management of resources in Azure using Azure PowerShell!
