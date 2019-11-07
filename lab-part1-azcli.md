@@ -6,7 +6,7 @@ At the end of this part you will deploy a web application in the resource group 
 Click on the lab window and enter the password `@lab.VirtualMachine(WRK2004).Password` to login to the lab.
 
 ### Connect to your Azure environment
-Search (click the magnifying glass in the start bar) for cmd and open the  Windows Command Prompt. Type the following command. 
+Search (click the magnifying glass in the start bar) for **cmd** and open the  Windows Command Prompt. Type the following command. 
 ```cmd
 az login
 ```
@@ -53,12 +53,12 @@ az configure --list-defaults --scope local
 ### Deploy the web app
 The following command will let you view details of the Azure web app instance that will be created, without actually running the operation
 ```cmd
-az webapp up --sku F1 -n wrk2004-@lab.LabInstance.Id -l eastus -g @lab.CloudResourceGroup(PSRG).Name --dryrun
+az webapp up --sku F1 -n wrk2004-@lab.LabInstance.Id -l eastus -g @lab.CloudResourceGroup(CLIRG).Name --dryrun
 ```
 
 The following command will then create the web app in your assigned resource group and upload the code from your local folder. (this will take a few minutes)
 ```cmd
-az webapp up --sku F1 -n wrk2004-@lab.LabInstance.Id -l eastus -g @lab.CloudResourceGroup(PSRG).Name
+az webapp up --sku F1 -n wrk2004-@lab.LabInstance.Id -l eastus -g @lab.CloudResourceGroup(CLIRG).Name
 ```
 Copy the Url property returned by this command or type this into the browser to go to the deployed web app - +++http://wrk2004-@lab.LabInstance.Id.azurewebsites.net+++ You should see Hello World! in the browser.
 
@@ -82,7 +82,7 @@ As it is idempotent and incremental, it will only redeploy the app and make no o
 ### Stream logs in the command line
 You can access the console logs generated from inside the app and the container in which it runs. 
 ```Shell
-az webapp log tail -n wrk2004-@lab.LabInstance.Id  -g @lab.CloudResourceGroup(PSRG).Name
+az webapp log tail -n wrk2004-@lab.LabInstance.Id  -g @lab.CloudResourceGroup(CLIRG).Name
 ```
 To stop log streaming at any time, type Ctrl+C. Refresh the webapp in the browser to generate more logs)
 
