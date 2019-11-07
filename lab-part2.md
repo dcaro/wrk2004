@@ -129,9 +129,9 @@ Select all the content and copy it with "Ctrl + C"
 
 - Click **Save and run**
 
-Browse to the web app in the resource group and click "Scale up" in the left blade.
+Browse to the app service blade in the portal by searching for `wrk2004-@lab.LabInstance.Id` in the top search box. Scroll all the way to the left and search for **"Scale up"** in the left blade search box. 
 
-Go to the production tab, the **P1V2** pricing tier should be selected. As we created one with a different tier (**F1** for CLI) in part 1, this worked!
+Select **"Scale up"** and select the **Production** tab. If the function worked, the **P1V2** pricing tier should be selected. As we created one with a different tier (**F1** for CLI) in part 1, you have successfully completed the lab!
 
 ## Summary
 Congratulations, you have created an  Azure function app using Azure CLI. This automates the management of resources in Azure using Azure PowerShell!
