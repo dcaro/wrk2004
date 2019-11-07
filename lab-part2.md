@@ -4,42 +4,28 @@ In this part you will create an Azure Function that will set the capacity of the
 
 We will use the PowerShell script that we have built in the first part of this lab.
 
-## Escape Hatch 
-Login to Azure CLI per instructions in Lab 1.
+## Connect to Azure with Azure CLI (for those who used Azure PowerShell in part 1)
+Search (click the magnifying glass in the start bar) for **cmd** and open the  Windows Command Prompt. Type the following command. 
+```CLI
+az login
+```
+This will open the browser and ask you to login. Enter the username(`@lab.CloudPortalCredential(User1).Username`) and password(`@lab.CloudPortalCredential(User1).Password`) when prompted to connect to Azure.
 
-In the first part, you saw how to use Azure PowerShell escape hatch to enable/disable a webapp.
+Go back to the **command prompt** window. Shortly, you should see the account information displayed.
 
-In this part, you will now use the escape hatch to create a preview Premium App Service Plan that is not yet supported in Azure CLI. This is needed to run an Azure Function with the PowerShell runtime.
+## Create an Elastic Premium Plan for FunctionApp
+From the command prompt run the following Azure CLI command to create an Elastic Premium plan in the PowerShell resource group
 
-### Create a preview Premium App Service Plan
-From the command prompt run the following Azure CLI command using the `az resource create` escape hatch to specify the preview Premium plan.
-
-```Shell
-az resource create 
--g @lab.CloudResourceGroup(PSRG).Name  
--n wrk2004plan-@lab.LabInstance.Id 
--p '{
-  "kind": "app",
-  "location": "East US",
-  "properties": {},
-  "sku": {
-      "name": "P1",
-      "tier": "Premium",
-      "size": "P1",
-      "family": "P",
-      "capacity": 1
-  }
-}'
---resource-type Microsoft.Web/serverfarms 
---is-full-object  -l eastus
+```CLI
+az functionapp plan create -g @lab.CloudResourceGroup(PSRG).Name -n wrk2004plan-@lab.LabInstance.Id --min-instances 1 --max-burst 10 --sku EP1
 ```
 
 ## Create an Azure Storage Account
 Create an Azure Storage Account to use as the function store.
 
 Run this command in the cmd window.
-```Shell
-az storage account create -n wrk2004store-@lab.LabInstance.Id -g @lab.CloudResourceGroup(PSRG).Name -l eastus --sku Standard_LRS
+```CLI
+az storage account create -n wrk2004store@lab.LabInstance.Id -g @lab.CloudResourceGroup(PSRG).Name -l eastus --sku Standard_LRS
 ```
 
 ## Create an Azure Function App
@@ -47,28 +33,62 @@ We can now use the plan above to create an Azure Function App using the Azure CL
 
 Run this command in the cmd window.
 
-```Shell
-az functionapp create -g @lab.CloudResourceGroup(PSRG).Name  -p wrk2004plan-@lab.LabInstance.Id -n wrk2004func-@lab.LabInstance.Id -s wrk2004store-@lab.LabInstance.Id --runtime 'powershell'
+```CLI
+az functionapp create -g @lab.CloudResourceGroup(PSRG).Name  -p wrk2004plan-@lab.LabInstance.Id -n wrk2004func-@lab.LabInstance.Id -s wrk2004store@lab.LabInstance.Id --runtime powershell
 ```
 
 Wait until the deployment has completed before proceeding to the next step. It will take couple of minutes to complete.
 
-## Assign permissions to the function app
-Login to PowerShell per instructions in Lab 1. 
-
-The following steps will give the Function App permissions to modify the Web App that we have create previously.
-From your PowerShell command, run the following commands:
+## Connect to Azure with Azure PowerShell (only for those who used Azure CLI in part 1)
+Launch **PowerShell 6**
+- Click on the start menu and type `PowerShell 6`
+- Click on "PowerShell 6 (x64)"
+From the PowerShell prompt type the following command then press "Enter".
 
 ```PowerShell
+Install-Module -Name Az -Force
+```
+The installation will take couple of minutes to complete.
+
+From the PowerShell prompt, type the following command and follow the instructions.
+
+```PowerShell
+Connect-AzAccount
+```
+Open the browser of your choice and go to +++http://aka.ms/devicelogin+++. Use following values to authenticate against Azure:
+
+userName
+    ```@lab.CloudPortalCredential(User1).Username```
+
+Password
+    ```@lab.CloudPortalCredential(User1).Password```
+
+Close the window once the authentication has completed and go back to the **PowerShell** window, yyou should see the account information displayed.
+
+## Assign permissions to the function app
+The following steps will give the Function App permissions to modify the Web App that we have create previously.
+From your PowerShell prompt, run the following to open Visual Studio Code :
+```PowerShell
+code perm.ps1
+```
+Enter the following into VSCode.
+```PowerShell
 $webAppName = "wrk2004-@lab.LabInstance.Id"
+$webResourceGroupName="@lab.CloudResourceGroup(CLIRG).Name"
 $functionAppName = "wrk2004func-@lab.LabInstance.Id"
-$resourceGroupName=@lab.CloudResourceGroup(PSRG).Name
+$funcresourceGroupName="@lab.CloudResourceGroup(PSRG).Name"
 #Get AppPlan for webApp
-$AppSvcPlanId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName).ServerFarmId
+$AppSvcPlanId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $webresourceGroupName).ServerFarmId
+$WebAppId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $webresourceGroupName).Id
 #Enable MSI and get MSI Id of the function
-$functionApp=Set-AzWebApp -AssignIdentity $true -Name $functionAppName -ResourceGroupName $resourceGroupName
+$functionApp=Set-AzWebApp -AssignIdentity $true -Name $functionAppName -ResourceGroupName $funcresourceGroupName
 # Assign the LOD owner role for the function App to the app service plan
 New-AzRoleAssignment -ObjectId $functionApp.Identity.PrincipalId -RoleDefinitionName "LOD Owner" -Scope $AppSvcPlanId
+New-AzRoleAssignment -ObjectId $functionApp.Identity.PrincipalId -RoleDefinitionName "LOD Owner" -Scope $WebAppId
+```
+Save the file in VSCode. From the PowerShell prompt, execute the above script by running it as below
+```PowerShell
+./perm.ps1
 ```
 
 ## Create a PowerShell function app that will allow to manage the scale of a website
@@ -80,62 +100,39 @@ The function app is really a place where you can create functions that will run 
 - Click on **In-portal** then **Continue**
 - Click on **Webhook + API** then **Create**
 
-Replace the code in the `run.ps1` file with the code below.
+> **NOTES:**
+>
+> - You can try to not look at the solution below and write the code yourself
+> - For practicality, use this command to get the code of the function on locally
 
-> **NOTE:** You can try to not look at the code below and do it yourself.
-
-- Replace the code in the `run.ps1` file with the code below.
+Go to you PowerShell session and type the following
 
 ```PowerShell
-using namespace System.Net
-
-# Input bindings are passed in via param block.
-param($Request, $TriggerMetadata)
-
-# Write to the Azure Functions log stream.
-Write-Host "PowerShell HTTP trigger function processed a request."
-
-# Interact with query parameters or the body of the request.
-$sku = $request.Query.Sku
-$webAppName = "wrk2004-@lab.LabInstance.Id"
-
-if (-not $sku) {
-    $sku = $Request.Body.Sku
-}
-
-$ErrorActionPreference = "Stop"
-if ($sku) {
-    try {
-        $AppSvcPlanId=(Get-AzWebApp -Name $webAppName -ResourceGroupName $resourceGroupName).ServerFarmId
-        Set-AzResource -ResourceId $AppSvcPlanID -Sku @{ Name = "$Sku"} -Force
-        $body = "WebSite $WebAppName status is now running with SKU $sku"
-    }
-    catch [Microsoft.Azure.Commands.ResourceManager.Cmdlets.Entities.ErrorResponses.ErrorResponseMessageException] {
-        $body = "Unsupported SKU"
-    }
-
-    $status = [HttpStatusCode]::OK
-}
-else {
-    $status = [HttpStatusCode]::BadRequest
-    $body = "Please pass a name on the query string or in the request body."
-}
-
-# Associate values to output bindings by calling 'Push-OutputBinding'.
-Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
-    StatusCode = $status
-    Body = $body
-})
+Invoke-WebRequest "https://raw.githubusercontent.com/dcaro/wrk2004/master/run.ps1" -OutFile ./run.ps1
 ```
+
+Open the file with notepad
+
+```PowerShell
+notepad ./run.ps1
+```
+
+Select all the content and copy it with "Ctrl + C"
+
+- Go to your browser and replace the content of the **run.ps1** in your browser with the content of the file that you have just copied.
 
 - Click on **Test** on the right of the page
 - Change the settings on the page as follows:
   - HTTP method: GET
-  - Add parameter: sku = P1V2
+  - Add parameter: sku = S2
+  - Add parameter: WebAppName = wrk2004-@lab.LabInstance.Id
+  - Add parameter: ResourceGRoup = @lab.CloudResourceGroup(PSRG).Name
+  
 - Click **Save and run**
 
 Browse to the web app in the resource group and click "Scale up" in the left blade.
-Under production, the P1V2 princing tier should be selected.
+
+Go to the production tab, the P1V2 princing tier should be selected.
 
 ## Test if the errors handling works
 
@@ -160,7 +157,6 @@ The function should accept the following parameters:
 Congratulations, you have created an  Azure function app using Azure CLI. This automates the management of resources in Azure using Azure PowerShell!
 
 In this lab you have completed the following tasks:
-
 - Create an Azure Function app that runs PowerShell using the Azure CLI with related Storage account and App service plan.
 - Give permissions to the Azure Function to modify the web app plan
 - Write PowerShell code with error handling that modifies the service plan
