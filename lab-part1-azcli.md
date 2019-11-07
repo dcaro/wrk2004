@@ -38,10 +38,11 @@ cd python-docs-hello-world
 #### Set global defaults
 Run az configure to understand the global defaults configured for your Azure CLI client, so you don't have to explicitly specify things like output format, resource group, location, etc across any of your commands.
 
-Press y to change the settings. Enter 5 to select yaml as the output format, then press enter multiple times until you get back to the command prompt to accept defaults for the other settings.
 ```cmd
 az configure
 ```
+Press y to change the settings. Enter 5 to select yaml as the output format, then press enter multiple times until you get back to the command prompt to accept defaults for the other settings.
+
 #### Get local defaults
 Besides the above, we have recently added an option to create different local defaults for certain common parameters that typically  differ across different environments like resource group and location. 
 
@@ -59,7 +60,7 @@ The following command will then create the web app in your assigned resource gro
 ```cmd
 az webapp up --sku F1 -n wrk2004-@lab.LabInstance.Id -l eastus -g @lab.CloudResourceGroup(PSRG).Name
 ```
-Copy the Url property returned by this command or click here to go to the deployed web app - http://@lab.LabInstance.Id.azurewebsites.net. You should see Hello World! in the browser.
+Copy the Url property returned by this command or click here to go to the deployed web app - +++http://@lab.LabInstance.Id.azurewebsites.net+++ You should see Hello World! in the browser.
 
 Rerun az configure to list local defaults configured by the up command.
 ```cmd
@@ -72,18 +73,18 @@ code application.py
 ```
 In the Visual Studio Code window that opens, change the string "Hello World!" to anything else of your choice (like "Goodbye Ignite!"). Then click File - Save to save this file. 
 
-You can now rerun az webapp up without any parameters. As it is idempotent and incremental, it will only redeploy the app and make no other changes to the existing webapp.
+You can now rerun az webapp up without any parameters. 
 ```cmd
 az webapp up
 ```
-Refresh the browser that shows Hello World!. You should now see the new string that you had entered in code.
+As it is idempotent and incremental, it will only redeploy the app and make no other changes to the existing webapp. Refresh the browser that shows Hello World!. You should now see the new string that you had entered in code.
 
 ### Stream logs in the command line
-You can access the console logs generated from inside the app and the container in which it runs. You can view recent logs with the following command (refresh the webapp in the browser to generate more logs)
+You can access the console logs generated from inside the app and the container in which it runs. 
 ```Shell
 az webapp log tail -n wrk2004-@lab.LabInstance.Id  -g @lab.CloudResourceGroup(PSRG).Name
 ```
-To stop log streaming at any time, type Ctrl+C.
+To stop log streaming at any time, type Ctrl+C. Refresh the webapp in the browser to generate more logs)
 
 ## Feedback
 If you find errors that are based on actual issues or would like to provide feedback on a command, we provide an enhanced command called `az feedback`. 
