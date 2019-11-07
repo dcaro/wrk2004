@@ -72,7 +72,7 @@ From your PowerShell prompt, run the following to open Visual Studio Code :
 ```PowerShell
 notepad perm.ps1
 ```
-Accept prompt to create the new file. Paste the following into notepad.<ensure you don't move the mouse or click elsewhere after clicking the T>
+Accept prompt to create the new file. Paste the following into notepad.<ensure you don't move the mouse or click elsewhere after clicking the T as this will take a while>. Ensure the contents have been copied accurately. 
 ```PowerShell
 $webAppName = "wrk2004-@lab.LabInstance.Id"
 $webResourceGroupName="@lab.CloudResourceGroup(CLIRG).Name"
@@ -96,7 +96,7 @@ Save the file. From the PowerShell prompt, execute the above script by running i
 
 The function app is really a place where you can create functions that will run code.
 - In the browser where you logged into the tools, goto - `http://portal.azure.com` and sign in
-- From the Azure portal, click on the function app that you created earlier by searching for `wrk2004func-@lab.LabInstance.Id` (Note: you may have to refresh your page to see it)
+- From the Azure portal search box on top, search for `wrk2004func-@lab.LabInstance.Id`
 - Click on the **+** sign next to **Function** on the left blade.
 - Scroll down and click on **In-portal** then **Continue**
 - Scroll up and Click on **Webhook + API** then **Create**
@@ -120,8 +120,8 @@ Select all the content and copy it with "Ctrl + C"
 - Change the settings on the page as follows:
   - HTTP method: GET
   - Add parameter: sku = S2
-  - Add parameter: WebAppName = wrk2004-@lab.LabInstance.Id
-  - Add parameter: ResourceGRoup = @lab.CloudResourceGroup(PSRG).Name 
+  - Add parameter: WebAppName = `wrk2004-@lab.LabInstance.Id`
+  - Add parameter: ResourceGRoup = `@lab.CloudResourceGroup(PSRG).Name` 
 - Click **Save and run**
 
 Browse to the web app in the resource group and click "Scale up" in the left blade.
