@@ -60,7 +60,7 @@ The following command will then create the web app in your assigned resource gro
 ```cmd
 az webapp up --sku F1 -n wrk2004-@lab.LabInstance.Id -l eastus -g @lab.CloudResourceGroup(PSRG).Name
 ```
-Copy the Url property returned by this command or click here to go to the deployed web app - +++http://@lab.LabInstance.Id.azurewebsites.net+++ You should see Hello World! in the browser.
+Copy the Url property returned by this command or type this into the browser to go to the deployed web app - +++http://wrk2004-@lab.LabInstance.Id.azurewebsites.net+++ You should see Hello World! in the browser.
 
 Rerun az configure to list local defaults configured by the up command.
 ```cmd
