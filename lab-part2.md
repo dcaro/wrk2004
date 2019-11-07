@@ -4,6 +4,17 @@ In this part you will create an Azure Function that will set the capacity of the
 
 We will use the PowerShell script that we have built in the first part of this lab.
 
+## Install Azure PowerShell (only for those who used Azure CLI in part 1)
+Launch **PowerShell 6**
+- Click on the start menu and type `PowerShell 6`
+- Click on "PowerShell 6 (x64)"
+From the PowerShell prompt type the following command then press "Enter".
+
+```PowerShell
+Install-Module -Name Az -Force
+```
+The installation will take couple of minutes to complete.
+
 ## Connect to Azure with Azure CLI (for those who used Azure PowerShell in part 1)
 Search (click the magnifying glass in the start bar) for **cmd** and open the  Windows Command Prompt. Type the following command. 
 ```CLI
@@ -40,16 +51,6 @@ az functionapp create -g @lab.CloudResourceGroup(PSRG).Name  -p wrk2004plan-@lab
 Wait until the deployment has completed before proceeding to the next step. It will take couple of minutes to complete.
 
 ## Connect to Azure with Azure PowerShell (only for those who used Azure CLI in part 1)
-Launch **PowerShell 6**
-- Click on the start menu and type `PowerShell 6`
-- Click on "PowerShell 6 (x64)"
-From the PowerShell prompt type the following command then press "Enter".
-
-```PowerShell
-Install-Module -Name Az -Force
-```
-The installation will take couple of minutes to complete.
-
 From the PowerShell prompt, type the following command and follow the instructions.
 
 ```PowerShell
