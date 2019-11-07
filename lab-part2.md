@@ -69,9 +69,9 @@ Close the window once the authentication has completed and go back to the **Powe
 The following steps will give the Function App permissions to modify the Web App that we have create previously.
 From your PowerShell prompt, run the following to open Visual Studio Code :
 ```PowerShell
-code perm.ps1
+notepad perm.ps1
 ```
-Enter the following into VSCode.
+Accept prompt to create the new file. Paste the following into notepad.<ensure you don't move the mouse or click elsewhere after clicking the T>
 ```PowerShell
 $webAppName = "wrk2004-@lab.LabInstance.Id"
 $webResourceGroupName="@lab.CloudResourceGroup(CLIRG).Name"
@@ -86,7 +86,7 @@ $functionApp=Set-AzWebApp -AssignIdentity $true -Name $functionAppName -Resource
 New-AzRoleAssignment -ObjectId $functionApp.Identity.PrincipalId -RoleDefinitionName "LOD Owner" -Scope $AppSvcPlanId
 New-AzRoleAssignment -ObjectId $functionApp.Identity.PrincipalId -RoleDefinitionName "LOD Owner" -Scope $WebAppId
 ```
-Save the file in VSCode. From the PowerShell prompt, execute the above script by running it as below
+Save the file. From the PowerShell prompt, execute the above script by running it as below
 ```PowerShell
 ./perm.ps1
 ```
@@ -132,25 +132,7 @@ Select all the content and copy it with "Ctrl + C"
 
 Browse to the web app in the resource group and click "Scale up" in the left blade.
 
-Go to the production tab, the P1V2 princing tier should be selected.
-
-## Test if the errors handling works
-
-Under "Query" change the parameters to sku = Q1
-The Output window will display the following message:
-
-```
-Unsupported SKU
-```
-
-## Bonus Lab, add the ability to enable / disable the website
-
-In this unguided exercise, create a new a function that will allow to enable / disable your website.
-
-The function should accept the following parameters:
-
-- The name of the web app
-- The end state, "enabled" and "disabled" should be the only authorized values
+Go to the production tab, the P1V2 pricing tier should be selected. As we created one with the free tier, this worked!
 
 ## Summary
 
