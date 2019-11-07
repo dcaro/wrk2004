@@ -2,14 +2,14 @@
 
 At the end of this part you will deploy a web application in the resource group that you have been provided.
 
-### Connect to your Azure environment
+### Login to the lab machine
+Click on the lab window and enter the password `@lab.VirtualMachine(WRK2004).Password` to login to the lab.
 
+### Connect to your Azure environment
 Search (click the magnifying glass in the start bar) for cmd and open the  Windows Command Prompt. Type the following command. 
 ```cmd
 az login
 ```
-
-#### Connect
 This will open the browser and ask you to login. Enter the username(`@lab.CloudPortalCredential(User1).Username`) and password(`@lab.CloudPortalCredential(User1).Password`) when prompted to connect to Azure.
 
 Go back to the **command prompt** window. Shortly, you should see the account information displayed.
@@ -25,7 +25,7 @@ You will be displayed the most common ways to create and use web apps today. We 
 ```cmd
 az find "az webapp up"
 ```
-##### Deploy a webapp with app code
+### Retrieve the app code to deploy
 First place the app code into a folder to upload from 
 ```cmd
 git clone https://github.com/Azure-Samples/python-docs-hello-world
@@ -34,18 +34,22 @@ Then go to the newly created app folder.
 ```cmd
 cd python-docs-hello-world
 ```
+### Set defaults for Azure CLI commands to reuse
+#### Set global defaults
 Run az configure to understand the global defaults configured for your Azure CLI client, so you don't have to explicitly specify things like output format, resource group, location, etc across any of your commands.
 
-Press y to change the settings. Enter 3 to select table as the output format, then press enter multiple times until you get back to the command prompt to accept defaults for the other settings.
+Press y to change the settings. Enter 5 to select yaml as the output format, then press enter multiple times until you get back to the command prompt to accept defaults for the other settings.
 ```cmd
 az configure
 ```
-Besides the above, we have recently added an option to create different local defaults for certain common parameters that (like resource group and location) can differ across different environments. 
+#### Get local defaults
+Besides the above, we have recently added an option to create different local defaults for certain common parameters that typically  differ across different environments like resource group and location. 
 
 List the local defaults for this newly created folder (there shouldn't be any, yet.)
 ```cmd
 az configure --list-defaults --scope local
 ```
+### Deploy the web app
 The following command will let you view details of the Azure web app instance that will be created, without actually running the operation
 ```cmd
 az webapp up --sku F1 -n wrk2004-@lab.LabInstance.Id -l eastus -g @lab.CloudResourceGroup(PSRG).Name --dryrun
@@ -55,16 +59,13 @@ The following command will then create the web app in your assigned resource gro
 ```cmd
 az webapp up --sku F1 -n wrk2004-@lab.LabInstance.Id -l eastus -g @lab.CloudResourceGroup(PSRG).Name
 ```
-Copy the Url property returned by this command or click here to go to the deployed web app - http://@lab.LabInstance.Id.azurewebsites.net
-
-You should see Hello World! in the browser.
+Copy the Url property returned by this command or click here to go to the deployed web app - http://@lab.LabInstance.Id.azurewebsites.net. You should see Hello World! in the browser.
 
 Rerun az configure to list local defaults configured by the up command.
 ```cmd
 az configure --list-defaults --scope local
 ```
-
-
+### Change and redeploy the app
 You can now make some changes to the app code and redeploy.
 ```cmd
 code application.py 
