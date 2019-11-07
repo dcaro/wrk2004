@@ -4,16 +4,13 @@ At the end of this part you will deploy a web application in the resource group 
 
 ### Connect to your Azure environment
 
-Search from the task bar for **cmd** to open the  Windows Command Prompt. Type the following command. 
+Search (click the magnifying glass in the start bar) for cmd and open the  Windows Command Prompt. Type the following command. 
 ```cmd
 az login
 ```
 
 #### Connect
-This will open the browser and ask you to login. Enter the following username and password when prompted to connect to Azure:
-
-Username: ```@lab.CloudPortalCredential(User1).Username```
-Password: ```@lab.CloudPortalCredential(User1).Password```
+This will open the browser and ask you to login. Enter the username(`@lab.CloudPortalCredential(User1).Username`) and password(`@lab.CloudPortalCredential(User1).Password`) when prompted to connect to Azure.
 
 Go back to the **command prompt** window. Shortly, you should see the account information displayed.
 
@@ -21,13 +18,11 @@ Go back to the **command prompt** window. Shortly, you should see the account in
 To find the command needed to deploy a web app, we will use the `az find` command that uses an AI that reads Azure documentation, usage and web content to provide you the most relevant commands and parameters.
 
 ```cmd
-# Find the command to use to create a webapp
 az find webapp
 ```
 You will be displayed the most common ways to create and use web apps today. We have recently created a simpler command to deploy a webapp with your app code. You can try the following to learn more about this command.
 
 ```cmd
-# Find the command to use to create a webapp
 az find "az webapp up"
 ```
 ##### Deploy a webapp with app code
