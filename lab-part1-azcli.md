@@ -4,7 +4,7 @@ At the end of this part you will deploy a web application in the resource group 
 
 ### Connect to your Azure environment
 
-Search (click the magnifying glass in the start bar) for cmd and open the  Windows Command Prompt. Type the following command. 
+Search from the task bar for **cmd** to open the  Windows Command Prompt. Type the following command. 
 ```cmd
 az login
 ```
@@ -12,8 +12,8 @@ az login
 #### Connect
 This will open the browser and ask you to login. Enter the following username and password when prompted to connect to Azure:
 
-    @lab.CloudPortalCredential(User1).Username
-    @lab.CloudPortalCredential(User1).Password
+Username: ```@lab.CloudPortalCredential(User1).Username```
+Password: ```@lab.CloudPortalCredential(User1).Password```
 
 Go back to the **command prompt** window. Shortly, you should see the account information displayed.
 
