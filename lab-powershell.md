@@ -223,6 +223,10 @@ We will use the PowerShell script that we have built in the first part of this l
 
 ### Create an Azure Function App for PowerShell
 
+You can perform this part using the portal or try out the preview of the Azure PowerShell module for Azure Functions (scroll down).
+
+**Using the Azure Portal**:
+
 - From the Azure Portal, click **Add** and type "Function App" in the search box.
 
 - Click **Create**
@@ -241,6 +245,32 @@ We will use the PowerShell script that we have built in the first part of this l
 - Click on **Create**
 
 Wait until the deployment has completed before proceeding to the next step. It will take couple of minutes to complete.
+
+**Using the preview of the Azure Functions modules**:
+
+- Install the module
+
+```PowerShell
+Install-Module -Name Az.Functions -AllowPrerelease
+```
+
+- Create a storage account
+
+```PowerShell
+New-AzStorageAccount -Name `wrk2004sa-@lab.LabInstance.Id` -Location eastus -ResourceGroupName @lab.CloudResourceGroup(PSRG).Name
+````
+
+- Create a Function App service plan
+
+```PowerShell
+New-AzFunctionAppPlan -ResourceGroupName @lab.CloudResourceGroup(PSRG).Name -Location "East US" -Sku EP1 -WorkerType Windows -Name wrk2004plan-@lab.LabInstance.Id
+```
+
+- Create the Function App
+
+```PowerShell
+New-AzFunctionApp -ResourceGroupName @lab.CloudResourceGroup(PSRG).Name -Location "East US" -Runtime PowerShell -Name wrk2004func-@lab.LabInstance.Id -StorageAccountName wrk2004sa-@lab.LabInstance.Id -OSType Windows
+```
 
 ## Assign permissions to the function app
 
