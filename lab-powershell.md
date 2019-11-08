@@ -353,10 +353,10 @@ The function should accept the following parameters:
 
 ## Summary
 
-Congratulations, you have created an  Azure function app using Azure CLI. This automates the management of resources in Azure using Azure PowerShell!
+Congratulations, you have created an  Azure function app to automate the management of resources in Azure using Azure PowerShell!
 
 In this lab you have completed the following tasks:
 
-- Create an Azure Function app that runs PowerShell using the Azure CLI with related Storage account and App service plan.
+- Create an Azure Function app that runs PowerShell using the Azure Function PowerShell module with related Storage account and App service plan.
 - Give permissions to the Azure Function to modify the web app plan
 - Write PowerShell code with error handling that modifies the service plan
