@@ -325,7 +325,7 @@ Select all the content and copy it with "Ctrl + C"
   - HTTP method: GET
   - Add parameter: sku = S2
   - Add parameter: WebAppName = wrk2004-@lab.LabInstance.Id
-  - Add parameter: ResourceGRoup = @lab.CloudResourceGroup(PSRG).Name
+  - Add parameter: ResourceGroupName = @lab.CloudResourceGroup(PSRG).Name
   
 - Click **Save and run**
 
