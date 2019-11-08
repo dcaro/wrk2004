@@ -257,7 +257,8 @@ Install-Module -Name Az.Functions -AllowPrerelease
 - Create a storage account
 
 ```PowerShell
-New-AzStorageAccount -Name wrk2004sa@lab.LabInstance.Id -Location eastus -ResourceGroupName @lab.CloudResourceGroup(PSRG).Name -SkuName Standard_LRS````
+New-AzStorageAccount -Name wrk2004sa@lab.LabInstance.Id -Location eastus -ResourceGroupName @lab.CloudResourceGroup(PSRG).Name -SkuName Standard_LRS
+```
 
 - Create a Function App service plan
 
