@@ -72,7 +72,7 @@ From your PowerShell prompt, run the following to open Visual Studio Code :
 ```PowerShell
 notepad perm.ps1
 ```
-**NOTE: PowerShell part 1 users, please change the web rg name to PSRG from CLIRG** 
+**NOTE: PowerShell part 1 users, please change the web rg name to PSRG from CLIRG. $webResourceGroupName="@lab.CloudResourceGroup(PSRG).Name"** 
 Accept prompt to create the new file. Paste the following into notepad.<ensure you don't move the mouse or click elsewhere after clicking the T as this will take a while>. Ensure the contents have been copied accurately. 
 ```PowerShell
 $webAppName = "wrk2004-@lab.LabInstance.Id"
@@ -120,11 +120,11 @@ Select all the content and copy it with "Ctrl + C"
 - Click on **Test** on the right of the page
 - Change the settings on the page as follows:
   - HTTP method: GET
-  - Add parameter: sku = S2
+  - Add parameter: Sku = S2
   - Add parameter: WebAppName = `wrk2004-@lab.LabInstance.Id`
   
-  - Add parameter: ResourceGRoup = `@lab.CloudResourceGroup(CLIRG).Name`
-  OR
+  - **CLI part 1 users only** Add parameter: ResourceGroupName = `@lab.CloudResourceGroup(CLIRG).Name`
+  **OR**
   - **PowerShell part 1 users only** Add parameter: ResourceGRoup = `@lab.CloudResourceGroup(PSRG).Name`
 
 - Click **Save and run**
