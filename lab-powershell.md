@@ -268,7 +268,7 @@ New-AzFunctionAppPlan -ResourceGroupName @lab.CloudResourceGroup(PSRG).Name -Loc
 - Create the Function App
 
 ```PowerShell
-New-AzFunctionApp -ResourceGroupName @lab.CloudResourceGroup(PSRG).Name -Location "East US" -Runtime PowerShell -Name wrk2004func-@lab.LabInstance.Id -StorageAccountName wrk2004sa-@lab.LabInstance.Id -OSType Windows
+New-AzFunctionApp -ResourceGroupName @lab.CloudResourceGroup(PSRG).Name -Location "East US" -Runtime PowerShell -Name wrk2004func-@lab.LabInstance.Id -StorageAccountName wrk2004sa@lab.LabInstance.Id -OSType Windows
 ```
 
 ## Assign permissions to the function app
